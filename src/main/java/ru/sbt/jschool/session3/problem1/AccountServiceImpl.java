@@ -52,17 +52,17 @@ public class AccountServiceImpl implements AccountService {
         paymentsId.add(payment.getOperationID());
         if (accounts.get(payment.getPayerAccountID()).getCurrency() == accounts.get(payment.getRecipientAccountID()).getCurrency()) {
             float newPayersBalance = accounts.get(payment.getPayerAccountID()).getBalance() - payment.getAmount();
-            accounts.replace(payment.getPayerAccountID(), new Account(payment.getPayerID(), payment.getPayerAccountID(), accounts.get(payment.getPayerAccountID()).getCurrency(), newPayersBalance));
+            accounts.get(payment.getPayerAccountID()).setBalance(newPayersBalance);
             float newRecipientBalance = accounts.get(payment.getRecipientAccountID()).getBalance() + payment.getAmount();
-            accounts.replace(payment.getRecipientAccountID(), new Account(payment.getRecipientID(), payment.getRecipientAccountID(), accounts.get(payment.getRecipientAccountID()).getCurrency(), newRecipientBalance));
+            accounts.get(payment.getRecipientAccountID()).setBalance(newRecipientBalance);
         } else doPaymentWithCurrency(payment);
         return Result.OK;
     }
 
     private void doPaymentWithCurrency(Payment payment) {
         float newPayersBalance = accounts.get(payment.getPayerAccountID()).getBalance() - payment.getAmount();
-        accounts.replace(payment.getPayerAccountID(), new Account(payment.getPayerID(), payment.getPayerAccountID(), accounts.get(payment.getPayerAccountID()).getCurrency(), newPayersBalance));
+        accounts.get(payment.getPayerAccountID()).setBalance(newPayersBalance);
         float newRecipientBalance = accounts.get(payment.getRecipientAccountID()).getBalance() + accounts.get(payment.getPayerAccountID()).getCurrency().to(payment.getAmount(), accounts.get(payment.getRecipientAccountID()).getCurrency());
-        accounts.replace(payment.getRecipientAccountID(), new Account(payment.getRecipientID(), payment.getRecipientAccountID(), accounts.get(payment.getRecipientAccountID()).getCurrency(), newRecipientBalance));
+        accounts.get(payment.getRecipientAccountID()).setBalance(newRecipientBalance);
     }
 }
